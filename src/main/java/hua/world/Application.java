@@ -2,19 +2,30 @@ package hua.world;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import hua.world.po.Customer;
 import hua.world.repository.CustomerRepository;
+import hua.world.ssl.HttpClientUtils;
 
 @SpringBootApplication
 @Controller
+@ComponentScan(basePackages="hua.world")
 @CrossOrigin(allowCredentials="true", origins="http://localhost:4201")
 public class Application {
 
@@ -28,6 +39,7 @@ public class Application {
 	@RequestMapping("/world/save")
 	@ResponseBody
 	public List<Customer> save() {
+		FilterRegistrationBean a = null;
 		// save a couple of customers
 		repository.save(new Customer("Alice", "Smith"));
 		repository.save(new Customer("Bob", "Smith"));
@@ -55,8 +67,10 @@ public class Application {
 	
 	@RequestMapping("/world/findAll")
 	@ResponseBody
-	public List<Customer> findAll() {
-		return repository.findAll();
+	public List<Customer> findAll(HttpServletRequest request, HttpServletResponse response) {
+		List<Customer> list = repository.findAll();
+		System.out.println("findAll" + list);
+		return list;
 	}
 	
 	@RequestMapping("/world/findByFirstName")
@@ -69,5 +83,32 @@ public class Application {
 	@ResponseBody
 	public Customer findByLastName(String lastName) {
 		return repository.findByFirstName(lastName);
+	}
+	
+	@Bean
+	public FilterRegistrationBean filterBean() {
+		FilterRegistrationBean bean = new FilterRegistrationBean();
+		bean.setFilter(new AccessFilter());
+		bean.setName("accessFilter");
+		bean.addUrlPatterns("/world/*");
+		return bean;
+	}
+	
+	@Bean
+	public HttpComponentsClientHttpRequestFactory factory() {
+		try {
+			CloseableHttpClient httpClient = HttpClientUtils.acceptsUntrustedCertsHttpClient();
+			HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			return clientHttpRequestFactory;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Bean
+	public RestTemplate restTemp() {
+		RestTemplate restTemplate = new RestTemplate(factory());
+		return restTemplate;
 	}
 }

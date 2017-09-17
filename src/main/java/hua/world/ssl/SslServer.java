@@ -30,11 +30,22 @@ public class SslServer {
 		// 要求客户端身份验证
 		serverSocket.setNeedClientAuth(true);
 
-		while (true) {
 			SSLSocket socket = (SSLSocket) serverSocket.accept();
-			Accepter accepter = new Accepter(socket);
-			accepter.service();
-		}
+			try {
+				InputStream inputStream = socket.getInputStream();
+
+				InputStreamReader inputstreamreader = new InputStreamReader(inputStream);
+				BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+
+				String string = null;
+				while ((string = bufferedreader.readLine()) != null) {
+					System.out.println(string);
+					System.out.flush();
+				}
+			} catch (Exception e) {
+				// replace with other code
+				e.printStackTrace();
+			}
 	}
 
 	static class Accepter implements Runnable {
