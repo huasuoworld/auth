@@ -14,11 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
+import hua.world.mq.ChatAnnotation;
 import hua.world.po.Customer;
 import hua.world.repository.CustomerRepository;
 import hua.world.ssl.HttpClientUtils;
@@ -26,9 +27,10 @@ import hua.world.ssl.HttpClientUtils;
 @SpringBootApplication
 @Controller
 @ComponentScan(basePackages="hua.world")
-@CrossOrigin(allowCredentials="true", origins="http://localhost:4201")
+//@ImportResource(locations={"classpath:client-context.xml"})
+//@CrossOrigin(allowCredentials="true", origins="http://localhost:4201")
 public class Application {
-
+	
 	@Autowired
 	private CustomerRepository repository;
 
@@ -65,11 +67,15 @@ public class Application {
 		return repository.findAll();
 	}
 	
+	@Autowired
+	private ChatAnnotation chatAnnotation;
+	
 	@RequestMapping("/world/findAll")
 	@ResponseBody
 	public List<Customer> findAll(HttpServletRequest request, HttpServletResponse response) {
 		List<Customer> list = repository.findAll();
 		System.out.println("findAll" + list);
+		chatAnnotation.sendAll(System.currentTimeMillis()+"findAll>>"+list);
 		return list;
 	}
 	
@@ -111,4 +117,9 @@ public class Application {
 		RestTemplate restTemplate = new RestTemplate(factory());
 		return restTemplate;
 	}
+	
+	@Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
 }

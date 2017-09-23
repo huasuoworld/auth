@@ -28,10 +28,13 @@ public class AccessFilter implements Filter{
 		JSONObject json = new JSONObject();
 		Cookie[] cookies = req.getCookies();
 		System.out.println(cookies);
-		for(Cookie cookie: cookies) {
-			json.put(cookie.getName(), cookie.getValue());
+		if(cookies != null) {
+			for(Cookie cookie: cookies) {
+				json.put(cookie.getName(), cookie.getValue());
+			}
+			System.out.println("/world/findAll>>"+json.toString());
 		}
-		System.out.println("/world/findAll>>"+json.toString());
+		chain.doFilter(request, response);
 	}
 
 	@Override
