@@ -116,6 +116,7 @@ public class ScheduleClusterCheck {
 	public ZooKeeper zooKeeper() {
 		ZooKeeper zk = null;
 		try {
+			//集群部署 127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002 逗号分隔
 			zk = new ZooKeeper("192.168.99.100:2181", 3000, simpleWatcher());
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -19,6 +19,7 @@ public class Simple1 {
 		try {
 			byte data[] = "test".getBytes();
 			Watcher watcher = new SimpleWatcher();
+			//集群部署 127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002 逗号分隔
 			ZooKeeper zk = new ZooKeeper("192.168.99.100:2181", 3000, watcher);
 			//永久节点PERSISTENT 临时节点EPHEMERAL
 //			zk.create(path, data, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
