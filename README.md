@@ -13,12 +13,12 @@ hua.world.scheduling.ScheduleClusterCheck 类定义拦截器，拦截定时任�
 3、删除该节点
 3、其他机器触发创建zookeeper节点时，创建失败，节点已经存在，不再执行定时任务
 
-![Alt text](https://github.com/huasuoworld/auth/tree/master/src/main/resources/task.png)
+![image](https://github.com/huasuoworld/auth/tree/master/src/main/resources/task.png)
 
 zookeeper版本3.4.6
 zookeeper集群部署:
 http://zookeeper.apache.org/doc/trunk/zookeeperAdmin.html
-![Alt text](https://github.com/huasuoworld/auth/tree/master/src/main/resources/zookeeperCluster.png)
+![image](https://github.com/huasuoworld/auth/tree/master/src/main/resources/zookeeperCluster.png)
 
 zoo.cfg配置文件
 1、复制zookeeper配置文件 conf/zoo_sample.cfg
