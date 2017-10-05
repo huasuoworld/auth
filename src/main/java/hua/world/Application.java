@@ -2,6 +2,7 @@ package hua.world;
 
 import java.util.List;
 
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +14,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +29,8 @@ import hua.world.ssl.HttpClientUtils;
 @SpringBootApplication
 @Controller
 @ComponentScan(basePackages="hua.world")
+@WebFilter
+@EnableScheduling
 //@ImportResource(locations={"classpath:client-context.xml"})
 //@CrossOrigin(allowCredentials="true", origins="http://localhost:4201")
 public class Application {

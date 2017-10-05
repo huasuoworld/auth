@@ -17,7 +17,7 @@ import javax.net.ssl.SSLSocket;
 
 public class SslServer {
 
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 		System.setProperty("javax.net.debug", "ssl,handshake");
 
 		System.setProperty("javax.net.ssl.keyStore", "E:/db/keystore/server.jks");

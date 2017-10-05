@@ -8,7 +8,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 public class SslClient {
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 		
 		System.setProperty("javax.net.debug", "ssl,handshake");
 

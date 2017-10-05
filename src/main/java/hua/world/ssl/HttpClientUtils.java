@@ -64,7 +64,7 @@ public class HttpClientUtils {
         return client;
     }
     
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
     	try {
     		CloseableHttpClient httpClient = HttpClientUtils.acceptsUntrustedCertsHttpClient();
     		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
