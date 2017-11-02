@@ -26,9 +26,9 @@
     </bean>
 
     <!-- Message Sender Definition -->
-    <bean id="messageSender" class="com.city81.jms.MessageSender">
-        <constructor-arg index="0" ref="jmsTemplate" />
-    </bean>
+<!--     <bean id="messageSender" class="com.city81.jms.MessageSender"> -->
+<!--         <constructor-arg index="0" ref="jmsTemplate" /> -->
+<!--     </bean> -->
 
     
     
