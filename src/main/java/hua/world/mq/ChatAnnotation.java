@@ -14,42 +14,48 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.springframework.stereotype.Component;  
+import org.springframework.stereotype.Component;
   
   
-@ServerEndpoint(value = "/websocket/chat") 
+@ServerEndpoint(value = "/api/websocket/storeGuest") 
 @Component
-public class ChatAnnotation {  
+public class StoreGuestWebSocket {  
   
-    private static final Log log = LogFactory.getLog(ChatAnnotation.class);  
+    private static final Log log = LogFactory.getLog(StoreGuestWebSocket.class);  
   
-    private static final String GUEST_PREFIX = "Guest";  
+    private static final String GUEST_PREFIX = "Guest_";  
     private static final AtomicInteger connectionIds = new AtomicInteger(0);  
     private static final Map<String,Object> connections = new HashMap<String,Object>();  
   
     private final String nickname;  
     private Session session;  
+    
+    public String getCurrentUser() {
+    	return this.nickname + this.session.getQueryString();
+    }
   
-    public ChatAnnotation() {  
-        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();  
+    public StoreGuestWebSocket() {  
+        nickname = GUEST_PREFIX;  
     }  
   
   
     @OnOpen  
     public void start(Session session) {  
-        this.session = session;  
-        connections.put(nickname, this);   
-        String message = String.format("* %s %s", nickname, "has joined.");  
-        broadcast(message);  
+    	this.session = session;  
+//        String qs = session.getQueryString();
+        connections.put(getCurrentUser(), this);   
+        String message = String.format("* %s %s", getCurrentUser(), "has joined.");  
+        broadcast(message, true, getCurrentUser());  
     }  
   
   
     @OnClose  
-    public void end() {  
+    public void end() throws IOException {  
         connections.remove(this);  
         String message = String.format("* %s %s",  
                 nickname, "has disconnected.");  
-        broadcast(message);  
+        broadcast(message, true, getCurrentUser());  
+        this.session.close();
     }  
   
   
@@ -62,7 +68,7 @@ public class ChatAnnotation {
         // Never trust the client  
         String filteredMessage = String.format("%s: %s",  
                 nickname, HTMLFilter.filter(message.toString()));  
-        broadcast(message);  
+        broadcast(message, true, getCurrentUser());  
     }  
   
     @OnError  
@@ -74,9 +80,9 @@ public class ChatAnnotation {
      * 消息发送方法 
      * @param msg 
      */  
-    private static void broadcast(String msg) {  
-        if(msg.indexOf("Guest0")!=-1){  
-            sendUser(msg);  
+    private void broadcast(String msg, boolean single, String user) {  
+        if(single){  
+            sendUser(msg, user);  
         } else{  
             sendAll(msg);  
         }  
@@ -86,15 +92,19 @@ public class ChatAnnotation {
      * 向所有用户发送 
      * @param msg 
      */  
-    public static void sendAll(String msg){  
+    public void sendAll(String msg){  
         for (String key : connections.keySet()) {  
-            ChatAnnotation client = null ;  
+            StoreGuestWebSocket client = null ;  
             try {  
-                client = (ChatAnnotation) connections.get(key);  
+                client = (StoreGuestWebSocket) connections.get(key);  
+                if(client == null) {
+                	this.end();
+                }
                 synchronized (client) {  
-                    client.session.getBasicRemote().sendText(msg);  
+//                    client.session.getBasicRemote().sendObject(msg);  
+                    client.session.getBasicRemote().sendText(msg);
                 }  
-            } catch (IOException e) {   
+            } catch (Exception e) {   
                 log.debug("Chat Error: Failed to send message to client", e);  
                 connections.remove(client);  
                 try {  
@@ -104,7 +114,7 @@ public class ChatAnnotation {
                 }  
                 String message = String.format("* %s %s",  
                         client.nickname, "has been disconnected.");  
-                broadcast(message);  
+                broadcast(message.toString(), false, key);  
             }  
         }  
     }  
@@ -113,8 +123,8 @@ public class ChatAnnotation {
      * 向指定用户发送消息  
      * @param msg 
      */  
-    public static void sendUser(String msg){  
-        ChatAnnotation c = (ChatAnnotation)connections.get("Guest0");  
+    public void sendUser(String msg, String user){  
+        StoreGuestWebSocket c = (StoreGuestWebSocket) connections.get(user);  
         try {  
             c.session.getBasicRemote().sendText(msg);  
         } catch (IOException e) {  
@@ -127,7 +137,7 @@ public class ChatAnnotation {
             }  
             String message = String.format("* %s %s",  
                     c.nickname, "has been disconnected.");  
-            broadcast(message);    
+            broadcast(message, true, user);    
         }   
     }  
 }  
