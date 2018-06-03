@@ -9,9 +9,9 @@ keytool -import -keystore c:\sean_app\serverTrust.jks -storepass 1234sp -file c:
 openssl req \
   -new -sha256 -newkey rsa:1024 -nodes \
   -subj '/CN=huasuoworld.com/O=huasuoworld, Inc./C=CN/ST=Shanghai/L=Shanghai' \
-  -keyout mykey.pem -out myreq.pem
+  -keyout private.pem -out public.pem
   
-openssl rsa -in mykey.pem -pubout -out myreq.pem
+openssl rsa -in private.pem -pubout -out public.pem
 
 2017-10-05	分布式定时任务
 hua.world.scheduling.ScheduleClusterCheck 类定义拦截器，拦截定时任务
