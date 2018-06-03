@@ -6,6 +6,12 @@ keytool -genkey -keystore c:\sean_app\client.jks -storepass 1234sp -keyalg RSA -
 keytool -export -keystore c:\sean_app\client.jks -storepass 1234sp -file c:\sean_app\client.cer
 keytool -import -keystore c:\sean_app\serverTrust.jks -storepass 1234sp -file c:\sean_app\client.cer 
 
+
+openssl req \
+  -new -sha256 -newkey rsa:2048 -nodes \
+  -subj '/CN=huasuoworld.com/O=huasuoworld, Inc./C=CN/ST=Shanghai/L=Shanghai' \
+  -keyout mykey.pem -out myreq.pem
+
 2017-10-05	分布式定时任务
 hua.world.scheduling.ScheduleClusterCheck 类定义拦截器，拦截定时任务
 1、当定时任务开始时，创建zookeeper节点
